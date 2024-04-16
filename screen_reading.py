@@ -363,6 +363,8 @@ def get_my_chips(imgray, w, h):
 
 def get_opponent_chips(imgray, w, h):
     opponent_chips_box = get_box(imgray, (25, 100), (120, 440), new_w=w, new_h=h)
+    opp_box_inverted = invert(opponent_chips_box)
+    #collect_img("image", opp_box_inverted)
     text = pytesseract.image_to_string(opponent_chips_box)
     try:
         return string_to_int(text)
@@ -505,7 +507,8 @@ def reset(pokerBot):
     pokerBot.raise_amount = 0
     return bet
 
-
+def collect_img(im_name, image):
+    cv.imwrite(f"images_we_want/{im_name}.png", image)
 
 def main():
     # loading sample images
@@ -559,7 +562,7 @@ def main():
 
             #if the game state is being updated
             if update2 == True:
-                print("update")
+                #print("update")
                 bet_total = reset(pokerBot)
 
                 test = get_opponent_chips(imgray, w, h)
