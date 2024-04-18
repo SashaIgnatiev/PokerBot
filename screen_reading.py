@@ -362,6 +362,7 @@ def get_my_chips(imgray, w, h):
         return 0
 
 def get_opponent_chips(imgray, w, h):
+
     opponent_chips_box = get_box(imgray, (25, 100), (120, 440), new_w=w, new_h=h)
     opp_box_inverted = invert(opponent_chips_box)
     #collect_img("image", opp_box_inverted)
