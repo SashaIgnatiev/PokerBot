@@ -18,18 +18,20 @@ class PokerBot:
         self.raise_amount = 0
     #This mehtod currently only works for a HUNL style game
     def action(self, pot_size, bet ,bet_total, game_state, table, position, Raise = False, All_In = False):
-
+        print(f'Inside action -- Cards: {self.cards}')
+        print(f'TABLE: {table}')
+        print(f'SELF CHIPS: {self.chips}')
       #  print('INSIDE ACTION')
         start_time = time.time()
         #print(pyautogui.position())
         if position == 0:
             self.bigBlind = True
-            print('WE ARE BIG BLIND...')
+            #print('WE ARE BIG BLIND...')
             player_1 = Villain('Player1')
             player_1.position = 'LP'
         else:
             self.bigBlind = False
-            print('WE ARE BIG DEALER...')
+            #print('WE ARE BIG DEALER...')
             player_1 = Villain('Player1')
             player_1.position = 'EP'
         total_equity = 1
@@ -45,12 +47,17 @@ class PokerBot:
             #print(f'POT SIZE: {pot_size}')
             #print(f'OUR CHIPS: {self.chips}')
         #Players will be a list of all the players in the game
-
-            equity_against_player = equity(self.cards, player_1.preflop_hand_distribution(), table)
+            try:
+                equity_against_player = equity(self.cards, player_1.preflop_hand_distribution(), table)
+            except:
+                if bet_total > 0:
+                    return 'Fold'
+                else:
+                    return 'Check'
             total_equity *= equity_against_player
 
 
-            print(f'Bot Equity: {total_equity}')
+            #print(f'Bot Equity: {total_equity}')
             #print(f'Pot Odds: {pot_odds}')
 
         #Poker Bot checks its expected value, if positive, then call, if negative, then fold
@@ -74,12 +81,18 @@ class PokerBot:
 
 
             if expected_value_raise > expected_value and expected_value_raise > 0 and All_In == False:
-                print(f'TABLE: {table}')
-                print(f'SELF CHIPS: {self.chips}')
+
                 closest_raise_amount = {}
                 for i in range(int(self.chips)):
                     closest_raise_amount[abs(opponent_equity - (i/pot_size))] = i
-                self.raise_amount = closest_raise_amount[min(closest_raise_amount.keys())]
+
+                try:
+                    self.raise_amount = closest_raise_amount[min(closest_raise_amount.keys())]
+                except:
+                    if self.raise_amount == 0:
+                        return 'Check'
+                    else:
+                        return 'Call'
                 if self.raise_amount < bet_total + bet:
                     self.raise_amount = bet_total + bet
 
@@ -111,6 +124,11 @@ class PokerBot:
             return self.pre_flop_action(bet_total, pot_size, bet, Raise = Raise, All_In = All_In)
     #Method that is going to decide whether we play our pre flop cards based on their hand rankings + position + prior bets
     def pre_flop_action(self, bet_total, pot_size, bet, Raise = False, All_In = False):
+        if bet_total == 0 or bet == 0:
+
+            bet = 100
+            bet_total = 100
+
         print(f'OUR CHIPS: {self.chips}')
         #print(f'RAISE TOTAL:{self.raise_total}')
 
@@ -126,7 +144,7 @@ class PokerBot:
                 #If we are first to act or our opponent checks, raise a smaller amount as to not scare our opponent off
                 if bet_total == self.big_blind_amount:
                     #print('BIG BLIND == BETSIZE')
-                    range_percentage = .1
+                    range_percentage = .04
 
                     self.raise_amount = self.raise_total + round((bet_total + bet) + (self.chips * range_percentage))
 
