@@ -1,35 +1,41 @@
 import sqlite3
+
 #Method will increment win or lose by one when called
-def performance_stat_tracker(state):
+"""
+Tracking the overall performance of the bot against all players it faces.
+Method should be called at the beginning, and the end of a session.
+"""
+pokerBot_name = 'PokerBot_MK1'
+def performance_stat_tracker(player, mychips, playerchips, start = True, game_id = None, hands_played = None):
+    global pokerBot_name
     con = sqlite3.connect('../Poker_Stats')
     cur = con.cursor()
-
-
-    if state == 'WIN':
-        test2 = cur.execute("SELECT win FROM win_amount WHERE version = 'PokerBot1.0';")
-
-        for i in test2:
-            win_counter = int(i[0])
-            win_counter += 1
+    if start == True:
+        cur.execute('INSERT INTO Performance (poker_bot_version, player_id, chips_before, player_chips_before) VALUES (?, ?, ?, ?)', (pokerBot_name, player, mychips, playerchips))
+        x = cur.execute('SELECT max(game_id) FROM Performance')
+        for i in x:
+            game_id = i[0]
             break
-        sql = """UPDATE win_amount SET '{field}' = '{value}' WHERE version = 'PokerBot1.0' """.format(field='win', value = win_counter)
+        print(f'Game id: {game_id}')
+        """
+        When the method is initially called it will return the game id of the current game. 
+        Store the game id in a variable and call the function again with the game id to call 
+        the correct column and store the results of the game.
+        """
 
-        cur.execute(sql)
-        con.commit()
-        cur.close()
+        return game_id
+    else:
+        if hands_played == None:
+            raise Exception('Hands Played can not be None')
+        if game_id == None:
+            raise Exception('Game_id can not be None')
 
-    if state == 'LOSE':
-        test2 = cur.execute("SELECT lose FROM win_amount WHERE version = 'PokerBot1.0';")
+        cur.execute('UPDATE Performance SET chips_after = ?, player_chips_after = ?, hands_player = ? WHERE game_id = ?', (mychips, playerchips, hands_played, game_id))
 
-        for i in test2:
-            win_counter = int(i[0])
-            win_counter += 1
-            break
-        sql = """UPDATE win_amount SET '{field}' = '{value}' WHERE version = 'PokerBot1.0' """.format(field='lose', value=win_counter)
 
-        cur.execute(sql)
-        con.commit()
-        cur.close()
+    cur.execute()
+    con.commit()
+    cur.close()
 
 def game_stat_tracker(player_name, state):
     con = sqlite3.connect('Poker_Stats')
