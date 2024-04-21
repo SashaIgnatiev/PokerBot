@@ -331,6 +331,8 @@ def grab_pot(imgray):
     except:
         return 1
 
+# test
+
 def get_dealer_pos(imcolor, w, h):
     area = get_box(imcolor, (330, 510), (100, 150), w, h)
     hsv = cv.cvtColor(area, cv.COLOR_BGR2HSV)
@@ -350,7 +352,7 @@ def get_dealer_pos(imcolor, w, h):
         return 0
 
 def get_my_chips(imgray, w, h):
-    my_chips_box = get_box(imgray, (25, 100), (510, 500), new_w=w, new_h=h)
+    my_chips_box = get_box(imgray, (22, 90), (510, 500), new_w=w, new_h=h)
     inverted_my_chips = invert(my_chips_box)
     # cv.imshow("yes", my_chips_box)
     # cv.waitKey(0)
@@ -541,6 +543,7 @@ def main():
     new_game = True
     bet_total = 0
     opp_chips = get_opponent_chips(old_imgray, w, h)
+
 
     while (1):
 
