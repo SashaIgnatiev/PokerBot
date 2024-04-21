@@ -22,6 +22,7 @@ import re
 # ensuring that pytesseract is in the path (idk why its not automatically, this just works)
 pytesseract.pytesseract.tesseract_cmd = r'/opt/homebrew/bin/tesseract'
 
+#this is a test
 
 class State(Enum):
     PREFLOP = "Pre-Flop"
