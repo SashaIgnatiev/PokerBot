@@ -39,12 +39,14 @@ def performance_stat_tracker(player, mychips, playerchips, start = True, game_id
 
 
 
-
-
+def game_stat_tracker(self, game_id, hand_id, bot_cards, chips_before, chips_after):
+    con = sqlite3.connect('Poker_stats')
+    cur = con.cursor()
+    cur.execute('SELECT game_id FROM Performance')
 def remove_elements(table):
     con = sqlite3.connect('Poker_Stats')
     cur = con.cursor()
-    cur.execute('DELETE FROM ?;', (table,))
+    cur.execute('DELETE FROM "{table}" ;'.format(table = table))
 
     con.commit()
     cur.close()
@@ -57,6 +59,4 @@ def remove_elements(table):
 
 
 if __name__ == "__main__":
-    x = performance_stat_tracker('Chad', 1000, 1000)
-    performance_stat_tracker('Chad', 100, 100, start = False, game_id = x, hands_played = 100)
-
+    remove_elements('Performance')
