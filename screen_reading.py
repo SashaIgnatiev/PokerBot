@@ -351,10 +351,11 @@ def get_dealer_pos(imcolor, w, h):
 
 def get_my_chips(imgray, w, h):
     my_chips_box = get_box(imgray, (25, 100), (510, 500), new_w=w, new_h=h)
+    inverted_my_chips = invert(my_chips_box)
     # cv.imshow("yes", my_chips_box)
     # cv.waitKey(0)
     # cv.destroyAllWindows()
-    text = pytesseract.image_to_string(my_chips_box)
+    text = pytesseract.image_to_string(inverted_my_chips)
     print(f"my chips raw = {text}")
     try:
         return string_to_int(text)
