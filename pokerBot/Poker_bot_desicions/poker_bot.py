@@ -4,7 +4,7 @@ from .Villain import Villain
 from .handRankingspt2 import pre_flop_rating
 import time
 import pyautogui
-
+import random
 class PokerBot:
     def __init__(self, chips, bigBlind):
         self.position = None
@@ -16,6 +16,7 @@ class PokerBot:
         self.big_blind_amount = bigBlind
         self.raise_total = 0
         self.raise_amount = 0
+        self.name = 'PokerBot_MK1'
     #This mehtod currently only works for a HUNL style game
     def action(self, pot_size, bet ,bet_total, game_state, table, position, Raise = False, All_In = False):
         print(f'Inside action -- Cards: {self.cards}')
@@ -41,12 +42,7 @@ class PokerBot:
 
 
         if game_state != 'Pre-Flop':
-            #print(f'BET: {bet}')
-            #print(f'BET_TOTAL: {bet_total}')
-            #print('INSIDE MIND')
-            #print(f'POT SIZE: {pot_size}')
-            #print(f'OUR CHIPS: {self.chips}')
-        #Players will be a list of all the players in the game
+
             try:
                 equity_against_player = equity(self.cards, player_1.preflop_hand_distribution(), table)
             except:
@@ -56,30 +52,33 @@ class PokerBot:
                     return 'Check'
             total_equity *= equity_against_player
 
+            """ Expected Value for Flop, Turn and River"""
+            if game_state == 'Flop':
+                pass
 
-            #print(f'Bot Equity: {total_equity}')
-            #print(f'Pot Odds: {pot_odds}')
 
-        #Poker Bot checks its expected value, if positive, then call, if negative, then fold
-        # Expected value if check / call
+
+
+            """Equity if we call or check"""
             opponent_equity = 1 - total_equity
             win = total_equity * (pot_size)
             lose = -((1 - total_equity) * (bet_total))
 
             expected_value = win + lose
 
-            # Expected value if we raise
+            """Expected value if we raise"""
             win_fold = total_equity * (pot_size + self.chips)
             win_call = (total_equity * (1- total_equity)) * (pot_size + self.chips)
             lose_call = -((1 - total_equity) ** 2) * (self.chips)
             expected_value_raise = win_fold + win_call + lose_call
+
             if All_In == True:
                 if expected_value > 0 or expected_value_raise > 0:
                     return 'Call'
                 else:
                     return 'Fold'
 
-
+            """If raising is optimal, find an amount such that our opponent might call"""
             if expected_value_raise > expected_value and expected_value_raise > 0 and All_In == False:
 
                 closest_raise_amount = {}
@@ -123,6 +122,10 @@ class PokerBot:
         else:
             return self.pre_flop_action(bet_total, pot_size, bet, Raise = Raise, All_In = All_In)
     #Method that is going to decide whether we play our pre flop cards based on their hand rankings + position + prior bets
+
+
+
+
     def pre_flop_action(self, bet_total, pot_size, bet, Raise = False, All_In = False):
         if bet_total == 0 or bet == 0:
 
@@ -144,7 +147,8 @@ class PokerBot:
                 #If we are first to act or our opponent checks, raise a smaller amount as to not scare our opponent off
                 if bet_total == self.big_blind_amount:
                     #print('BIG BLIND == BETSIZE')
-                    range_percentage = .04
+                    range_percentage = random.random(.04, .08)
+
 
                     self.raise_amount = self.raise_total + round((bet_total + bet) + (self.chips * range_percentage))
 
@@ -171,7 +175,8 @@ class PokerBot:
                 if bet_total == self.big_blind_amount:
                     #print('BET SIZE IS BIG')
                     #print(f'INSIDE BET_SIZE == BIG BLIND')
-                    range_percentage = .18 / abs(8 - number_ranking)
+                    range_percentage = random.random(.04, .065)
+                    range_percentage = range_percentage / abs(8 - number_ranking)
 
                     self.raise_amount = self.raise_total + round((bet_total + bet) + (range_percentage * self.chips))
                     #self.raise_amount = self.raise_total + self.big_blind_amount
@@ -214,7 +219,8 @@ class PokerBot:
         elif number_ranking >= 43 and number_ranking <= 84:
             #print(f'BET SIZE: {bet_size} BIG BLIND: {self.big_blind_amount}')
             #If top of middle range, min-click + percentage
-            range_percentage =  .06 / abs(42 - number_ranking)
+            range_percentage = random.random(.02, .04)
+            range_percentage =  range_percentage / abs(42 - number_ranking)
 
             if  self.big_blind_amount < bet_total and (bet_total <= ((2 * self.big_blind_amount) + (range_percentage * self.chips))):
                 return 'Call'
