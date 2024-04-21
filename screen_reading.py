@@ -460,7 +460,8 @@ def is_our_turn (imcolor, w, h):
         return True
 
 def card_converter(card):
-    suite_names = ["spade", "heart", "club", "diamond", "diamond_first", "club_first", "heart_first", "spade_first"]
+    suite_names = ["spade", "heart", "club", "diamond", "diamond_first", "club_first", "heart_first", "spade_first",
+                   "diamond_first2"]
     rank_names = ["two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "jack",
                   "queen", "king", "ace", "spade_first2"]
 
@@ -544,7 +545,7 @@ def main():
     new_game = True
     bet_total = 0
     opp_chips = get_opponent_chips(old_imgray, w, h)
-
+    file_counter = 0
 
     while (1):
 
@@ -634,6 +635,14 @@ def main():
             pokerBot.chips = get_my_chips(imgray, w, h)
             pos = get_dealer_pos(imcolor, w, h)
             pot = grab_pot(imgray)
+
+            for card in our_cards:
+                not_a_var = card.suit_im
+                caanot_be_a_var = card.suit
+                cv.imwrite(f"my_cards/{caanot_be_a_var + str(file_counter)}.png", not_a_var)
+                file_counter +=1
+
+
 
             if update == False: # and old_dealer_pos == pos:
                 bet_total = bet_total + get_opponent_bet(imgray, old_imgray, w, h)

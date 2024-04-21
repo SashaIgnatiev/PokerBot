@@ -5,6 +5,7 @@ from .handRankingspt2 import pre_flop_rating
 import time
 import pyautogui
 import random
+import numpy as np
 class PokerBot:
     def __init__(self, chips, bigBlind):
         self.position = None
@@ -67,9 +68,9 @@ class PokerBot:
             expected_value = win + lose
 
             """Expected value if we raise"""
-            win_fold = total_equity * (pot_size + self.chips)
-            win_call = (total_equity * (1- total_equity)) * (pot_size + self.chips)
-            lose_call = -((1 - total_equity) ** 2) * (self.chips)
+            win_fold = total_equity * (pot_size)
+            win_call = (total_equity) * (pot_size + self.chips)
+            lose_call = -((1 - total_equity)) * (self.chips)
             expected_value_raise = win_fold + win_call + lose_call
 
             if All_In == True:
@@ -147,7 +148,7 @@ class PokerBot:
                 #If we are first to act or our opponent checks, raise a smaller amount as to not scare our opponent off
                 if bet_total == self.big_blind_amount:
                     #print('BIG BLIND == BETSIZE')
-                    range_percentage = random.random(.04, .08)
+                    range_percentage = np.random.uniform(.04, .08)
 
 
                     self.raise_amount = self.raise_total + round((bet_total + bet) + (self.chips * range_percentage))
@@ -175,7 +176,7 @@ class PokerBot:
                 if bet_total == self.big_blind_amount:
                     #print('BET SIZE IS BIG')
                     #print(f'INSIDE BET_SIZE == BIG BLIND')
-                    range_percentage = random.random(.04, .065)
+                    range_percentage = np.random.uniform(.04, .065)
                     range_percentage = range_percentage / abs(8 - number_ranking)
 
                     self.raise_amount = self.raise_total + round((bet_total + bet) + (range_percentage * self.chips))
@@ -219,7 +220,7 @@ class PokerBot:
         elif number_ranking >= 43 and number_ranking <= 84:
             #print(f'BET SIZE: {bet_size} BIG BLIND: {self.big_blind_amount}')
             #If top of middle range, min-click + percentage
-            range_percentage = random.random(.02, .04)
+            range_percentage = np.random.uniform(.02, .04)
             range_percentage =  range_percentage / abs(42 - number_ranking)
 
             if  self.big_blind_amount < bet_total and (bet_total <= ((2 * self.big_blind_amount) + (range_percentage * self.chips))):
