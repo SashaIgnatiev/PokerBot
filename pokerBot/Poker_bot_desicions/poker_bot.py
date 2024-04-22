@@ -68,7 +68,7 @@ class PokerBot:
             expected_value = win + lose
 
             """Expected value if we raise"""
-            win_fold = total_equity * (pot_size)
+            win_fold = total_equity * (pot_size + bet_total)
             win_call = (total_equity) * (pot_size + self.chips)
             lose_call = -((1 - total_equity)) * (self.chips)
             expected_value_raise = win_fold + win_call + lose_call
